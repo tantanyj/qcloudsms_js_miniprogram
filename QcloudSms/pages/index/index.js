@@ -58,7 +58,7 @@ Page({
   login(e) {
     var that = this;
     var timestamp = Date.parse(new Date()) / 1000;
-    var random = Math.round(Math.random()*99999+10000);
+	//验证码校验
     if(that.data.phone.length==11&&that.data.code.length==6){
     wx.cloud.callFunction({
       name: 'CheckCode',
