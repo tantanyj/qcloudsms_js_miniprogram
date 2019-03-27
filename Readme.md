@@ -1,7 +1,7 @@
 # 腾讯云短信 小程序短信验证码Demo
 此Demo仅供示例参考
 
-##注意&使用指引：
+## 注意&使用指引：
 - [1] 因目前不支持直接导入云函数，需项目内创建同名文件夹'SingleSender'，'CheckCode'后，复制文档中的index.js 进行调用
 - [2] 需手动创建云数据库，命名为'SmsDB'
 - [3] 本地测试前需在对应路径安装云函数sdk (npm install --save wx-server-sdk@latest) 
