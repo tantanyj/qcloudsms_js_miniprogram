@@ -7,6 +7,7 @@ Page({
     btnDisabled: false,
     name: '',
     phone: '',
+    number:'',
     code: '',
     second: 60
   },
@@ -15,10 +16,11 @@ Page({
   },
   //手机号输入
   bindPhoneInput(e) {
+    var val = e.detail.value;
     this.setData({
-      phone: e.detail.value
+      phone: val
     })
-    if (e.detail.value.length == 11) {
+    if (val.length == 11) {
       this.setData({
         hidden: false,
         btnValue: '获取验证码'
@@ -58,36 +60,54 @@ Page({
   login(e) {
     var that = this;
     var timestamp = Date.parse(new Date()) / 1000;
-	//验证码校验
-    if(that.data.phone.length==11&&that.data.code.length==6){
-    wx.cloud.callFunction({
-      name: 'CheckCode',
-      data: {
-        number:that.data.phone,
-        code:that.data.code
-      },success:function(res){
-        for(var i=0;i<=res.result.data.length;++i){
-          var resdata = res.result.data[i]        
-          var _number = JSON.parse(JSON.stringify(resdata.number))
-          var _code = JSON.parse(JSON.stringify(resdata.code))
-          var _time = JSON.parse(JSON.stringify(resdata.time))
-        if (that.data.phone==_number&&that.data.code==_code&&timestamp-_time<=300){
-          console.log('check success: '+resdata)
-          break
-        }else{
-          wx.showToast({
-            title: '校验失败',
-            icon: 'none',
-            duration: 1500
-          })
-          console.log('check faild')
-          break
-        }
-      }
-      },fail:function(res){
-        console.log(res)
-      }
-    })
-  }
+    //验证码校验
+    if (that.data.phone.length == 11 && that.data.code.length == 6) {
+      wx.cloud.callFunction({
+        name: 'CheckCode',
+        data: {
+          number: that.data.phone
+        }, success: function (res) {
+          for (var i = 0; i <= res.result.data.length; ++i) {
+            var resdata = res.result.data[i]
+            if (resdata == '' || resdata == null){
+              wx.showToast({
+                title: '校验失败',
+                icon: 'none',
+                duration: 1500
+              })
+              console.log('没有相匹配的内容，数据库返回空值了')
+              break
+            }
+            var _number = JSON.parse(JSON.stringify(resdata.number))
+            var _code = JSON.parse(JSON.stringify(resdata.code))
+            var _time = JSON.parse(JSON.stringify(resdata.time))
+            if (that.data.phone == _number && that.data.code == _code){
+                if (timestamp - _time <= 300) {
+                wx.showToast({
+                title: '校验成功',
+                icon: 'none',
+                duration: 1500
+              })
+              console.log(resdata.number+'check success')
+              break                
+              }
+                else {
+                  wx.showToast({
+                    title: '校验失败',
+                    icon: 'none',
+                    duration: 1500
+                  })
+                  console.log('check faild')
+                  break
+                }
+            }
+          }
+        }, fail: function (res) {
+          console.log('fail faild')
+          console.log(res)
+        }       
+      })
+      
+    }
   }
 })
