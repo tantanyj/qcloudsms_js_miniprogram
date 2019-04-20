@@ -5,14 +5,12 @@ Page({
     hidden: true,
     btnValue: '',
     btnDisabled: false,
-    name: '',
     phone: '',
-    number:'',
-    code: '',
-    second: 60
+    VerifyCode: ''
+  },
+  onReady:function(){
   },
   onLoad: function () {
-
   },
   //手机号输入
   bindPhoneInput(e) {
@@ -20,6 +18,7 @@ Page({
     this.setData({
       phone: val
     })
+    //强制要求输入11位
     if (val.length == 11) {
       this.setData({
         hidden: false,
@@ -31,10 +30,10 @@ Page({
       })
     }
   },
-  //验证码输入
-  bindCodeInput(e) {
+  //短信验证码输入
+  bindVerifyCodeInput(e) {
     this.setData({
-      code: e.detail.value
+      VerifyCode: e.detail.value
     })
   },
   //获取短信验证码
@@ -43,13 +42,13 @@ Page({
     wx.cloud.callFunction({
       name: 'SingleSender',
       data: {
-        number:that.data.phone
+        number: that.data.phone
       },
       success(res) {
         console.log(res.result.body),
           wx.showToast({
-            title:'验证码已发送',
-            icon:'none',
+            title: '验证码已发送',
+            icon: 'none',
             duration: 1500
           })
       },
@@ -59,55 +58,30 @@ Page({
   //登录
   login(e) {
     var that = this;
-    var timestamp = Date.parse(new Date()) / 1000;
     //验证码校验
-    if (that.data.phone.length == 11 && that.data.code.length == 6) {
       wx.cloud.callFunction({
         name: 'CheckCode',
         data: {
-          number: that.data.phone
-        }, success: function (res) {
-          for (var i = 0; i <= res.result.data.length; ++i) {
-            var resdata = res.result.data[i]
-            if (resdata == '' || resdata == null){
-              wx.showToast({
-                title: '校验失败',
-                icon: 'none',
-                duration: 1500
-              })
-              console.log('没有相匹配的内容，数据库返回空值了')
-              break
-            }
-            var _number = JSON.parse(JSON.stringify(resdata.number))
-            var _code = JSON.parse(JSON.stringify(resdata.code))
-            var _time = JSON.parse(JSON.stringify(resdata.time))
-            if (that.data.phone == _number && that.data.code == _code){
-                if (timestamp - _time <= 300) {
-                wx.showToast({
-                title: '校验成功',
-                icon: 'none',
-                duration: 1500
-              })
-              console.log(resdata.number+'check success')
-              break                
-              }
-                else {
-                  wx.showToast({
-                    title: '校验失败',
-                    icon: 'none',
-                    duration: 1500
-                  })
-                  console.log('check faild')
-                  break
-                }
-            }
+          PhoneNumber: that.data.phone,
+          VerifyCode: that.data.VerifyCode
+        }, success: res => {
+          if (res.result.VerifyStauts == 1) {
+            wx.showToast({
+              title: '校验成功',
+              icon: 'none',
+              duration: 1500
+            })
+            console.log(that.data.phone + 'check success')
           }
-        }, fail: function (res) {
-          console.log('fail faild')
-          console.log(res)
-        }       
-      })
-      
-    }
+          else{
+            wx.showToast({
+              title: '校验失败',
+              icon: 'none',
+              duration: 1500
+            })
+            console.log(that.data.phone + 'check faild')
+          }
+        }     
+      })    
   }
 })
