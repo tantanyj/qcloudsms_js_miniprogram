@@ -4,6 +4,7 @@
 版本迭代详见[UpdateList](https://github.com/tantanyj/qcloudsms_js_miniprogram/blob/master/UpdateList.md)
 
 ## 注意&使用指引：
+- [0] 使用前请先在[腾讯云控制台](https://console.cloud.tencent.com/sms/smslist)上申请好签名和模板。模板正文建议直接申请"{1}为您的短信验证码，请在5分钟内填写。"
 - [1] 因目前不支持直接导入云函数，需项目内创建同名文件夹'SingleSender'，'CheckCode'后，复制文档中的index.js 进行调用
 - [2] 需手动创建云数据库，命名为'SmsDB'
 - [3] 本地测试前需在对应路径安装云函数sdk (npm install --save wx-server-sdk@latest) 
