@@ -149,6 +149,6 @@ Page({
         duration: 1500
         })
 	return		
-	  }
-  }
+      }
+   }
 })
