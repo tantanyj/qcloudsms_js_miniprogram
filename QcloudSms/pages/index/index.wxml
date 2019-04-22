@@ -4,11 +4,18 @@
      <input placeholder='请输入手机号' bindinput='bindPhoneInput'/> 
   </view>
   <view class='row'>
-     <input placeholder='请输验证码' bindinput='bindCodeInput' style='width:70%;'/> 
+     <input placeholder='请输入图形验证码' bindinput='bindMCaptchaCodeInput'/>
+     <view style='position:relative;' bindtap="changeImg">
+     <canvas style="width:160rpx;height:70rpx;position:absolute;right:0rpx;bottom:10rpx;text-align: center;z-index:9999;" canvas-id="canvas"></canvas>
+     </view>
+  </view>
+  
+  <view class='row'>
+     <input placeholder='请输入短信验证码' bindinput='bindVerifyCodeInput' style='width:70%;'/> 
      <button class='codeBtn' bindtap='getCode' hidden='{{hidden}}' disabled='{{btnDisabled}}'>{{btnValue}}</button>
   </view>
   <view>
-     <button class='login' bindtap='login'>登录</button>
+     <button class='login' bindtap='login' >登录</button>
   </view>
-
+  
 </view>
