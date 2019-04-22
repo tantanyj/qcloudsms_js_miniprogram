@@ -142,7 +142,7 @@ Page({
         }     
       })
     }
-	else {
+    else {
       wx.showToast({
         title: '请完整输入11位手机号/6位短信验证码',
         icon: 'none',
