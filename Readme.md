@@ -11,13 +11,20 @@
 - [5] 【重要】Demo仅供示例参考，实际生产环境调用中，需要增设图形防刷措施，防止接口被恶意请求造成短信轰炸，导致费用被无辜使用，手机用户被骚扰(预防短信轰炸措施可见参考文档)
 
 ## 参考文档
-- [云开发文档]https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html
+- [云开发文档]
+https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html
 
-- [云短信API接口说明]https://cloud.tencent.com/document/product/382/5976
 
-- [CyrptoJS加密方法]https://code.google.com/archive/p/crypto-js/downloads
+- [云短信API接口说明]
+https://cloud.tencent.com/document/product/382/5976
+
+
+- [CyrptoJS加密方法]
+https://code.google.com/archive/p/crypto-js/downloads
+
 
 - [预防短信轰炸]
 https://cloud.tencent.com/document/product/382/13303#.E5.A6.82.E4.BD.95.E9.A2.84.E9.98.B2.E7.9F.AD.E4.BF.A1.E8.BD.B0.E7.82.B8.EF.BC.9F
+
 
 
