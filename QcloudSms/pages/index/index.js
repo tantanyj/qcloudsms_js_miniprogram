@@ -4,8 +4,11 @@ var MCaptcha = require ('../../utils/Mcaptcha.js');
 Page({
   data: {
     hidden: true,
-    btnValue: '',
     btnDisabled: false,
+    SendState:true,
+    AlreadySend:false,
+    Second:60,
+    DisableReSend:true,
     PhoneNumber: '',
     MCaptchaCode:'',
     MCaptchaClickTimes: 0,
@@ -24,15 +27,14 @@ Page({
   },
   //手机号输入
   bindPhoneInput(e) {
-    var val = e.detail.value;
+    var PhoneNumber = e.detail.value;
     this.setData({
-      PhoneNumber: val
+      PhoneNumber: PhoneNumber
     })
     //强制要求输入11位
-    if (val.length == 11) {
+    if (PhoneNumber.length == 11) {
       this.setData({
         hidden: false,
-        btnValue: '获取验证码'
       })
     } else {
       this.setData({
@@ -41,7 +43,7 @@ Page({
     }
   },
   //刷新验证码
-  changeImg() {
+  changeImg: function(){
     var that = this;
     if (that.data.MCaptchaClickTimes < 6) {
       that.setData({ MCaptchaClickTimes: that.data.MCaptchaClickTimes + 1 });
@@ -76,8 +78,9 @@ Page({
   //获取短信验证码
   getCode(e) {
     //图形验证码校验
-    var res = this.MCaptcha.validate(this.data.MCaptchaCode);
-    if (this.data.MCaptchaCode == '' || this.data.MCaptchaCode==null){
+    var that = this
+    var res = that.MCaptcha.validate(that.data.MCaptchaCode);
+    if (that.data.MCaptchaCode == '' || that.data.MCaptchaCode==null){
       wx.showToast({
         title: '请输入图形验证码', 
         icon: 'none',
@@ -95,6 +98,15 @@ Page({
       })
       return;
     }
+    if (!(/^[1][3,4,5,6,7,8,9][0-9]{9}$/.test(that.data.PhoneNumber))){
+      wx.showToast({
+        title: '请完整输入11位手机号',
+        icon: 'none',
+        duration: 1500,
+        mask: true
+      })
+      return;
+    }
     var that = this;
     wx.cloud.callFunction({
       name: 'SingleSender',
@@ -108,15 +120,43 @@ Page({
             icon: 'none',
             duration: 1500
           })
+      that.setData({
+        AlreadySend:true,
+        SendState:false
+      })
+      that.changeImg()
+      that.ReSend()
       },
       fail: console.error
+    })
+  },
+  //60s倒计时重新获取
+  ReSend:function(){
+    let promise = new Promise((resolve, reject) => {
+      var that = this
+      let SetTimer = setInterval(()=>{
+        that.setData({
+          Second: that.data.Second - 1 
+        })
+      if(that.data.Second <= 0){
+        that.setData({
+          Second: 60,
+          AlreadySend:false,
+          SendState:true
+        })
+        resolve(SetTimer)
+      }
+    },1000)
+    })
+    promise.then((SetTimer)=>{
+      clearInterval(SetTimer)
     })
   },
   //登录
   login(e) {
     var that = this;
     //验证码校验
-    if (that.data.PhoneNumber.length == 11 && that.data.VerifyCode.length == 6) {
+    if ((/^[1][3,4,5,6,7,8,9][0-9]{9}$/.test(that.data.PhoneNumber)) && (/^[0-9]{6}$/.test(that.data.VerifyCode))) {
       wx.cloud.callFunction({
         name: 'CheckCode',
         data: {
@@ -142,13 +182,13 @@ Page({
         }     
       })
     }
-    else {
+    else{
       wx.showToast({
         title: '请完整输入11位手机号/6位短信验证码',
         icon: 'none',
         duration: 1500
-        })
-	return		
-      }
-   }
+      })
+      return
+    }   
+  }
 })
